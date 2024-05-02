@@ -1,6 +1,53 @@
 <html>
+<head>
+    <style>
+        body
+        {
+            background-color: black;
+        }
+
+        #map {
+            width: auto;
+            height: 100%;
+        }
+
+        #calculating
+        {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+        }
+
+        #calculating div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 50px;
+            font-family: Arial, sans-serif;
+        }
+
+        #menu
+        {
+            position: fixed;
+            top: 0px;
+            right: 0px;
+            width: 150px;
+            bottom: 0px;
+            padding: 10px;
+            background-color: #333;
+        }
+    </style>
+</head>    
     <body>
-        <canvas id="map" width="1500" height="1500"></canvas>
+        <canvas id="map" width="3000" height="3000"></canvas>
+        <div id="calculating"><div>Calculating...</div></div>
+        <div id="menu">
+            <button onclick="Generate()">Generate</button>
+        </div>
         <script src="dungeon.js"></script>
     </body>
 </html>

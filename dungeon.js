@@ -6,7 +6,7 @@ var perimeters = [];
 
 function DrawOddCircle(x, y, radius)
 {
-    ctx.fillStyle = "rgba(255,0,0)";
+    ctx.fillStyle = "rgba(180,180,180)";
     ctx.beginPath();
     var sizes = [];
     for (var i = 0; i < 80; i++)
@@ -49,7 +49,7 @@ function DrawOddCircle(x, y, radius)
     ctx.fill();
 }
 
-function MakeChamber(x,y)
+function MakeChamber(x, y)
 {
     perimeters = [];
     DrawOddCircle(x, y, 20);
@@ -59,21 +59,95 @@ function MakeChamber(x,y)
         perimeters = [];
         for (var i = 0; i < 15; i++)
         {
-            var p = Math.ceil(Math.random() * usablePerimeters.length-1);
+            var p = Math.ceil(Math.random() * usablePerimeters.length - 1);
             DrawOddCircle(usablePerimeters[p].x, usablePerimeters[p].y, 10 * Math.random() + 10);
         }
-    }    
+    }
+}
+
+
+function FindEdgePoints()
+{
+    var results = [];
+    // Get the image data
+    var imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // Vertical edges
+    for (var x = 0; x < ctx.canvas.width; x += 50)
+    {
+        // From top to bottom
+        for (var y = 0; y < ctx.canvas.height; y += 10)
+        {
+            if (imageData.data[(y * ctx.canvas.width + x) * 4] == 180)
+            {
+                results.push({ x: x, y: y });
+                break;
+            }
+        }
+
+        // From bottom to top
+        for (var y = ctx.canvas.height-1; y >= 0 ; y -= 10)
+        {
+            if (imageData.data[(y * ctx.canvas.width + x) * 4] == 180)
+            {
+                results.push({ x: x, y: y });
+                break;
+            }
+        }
+    }
+
+    // Horizontal edges
+    for (var y = 0; y < ctx.canvas.height; y += 50)
+    {
+        // From left to right
+        for (var x = 0; x < ctx.canvas.width; x += 10)
+        {
+            if (imageData.data[(y * ctx.canvas.width + x) * 4] == 180)
+            {
+                results.push({ x: x, y: y });
+                break;
+            }
+        }
+
+        // From right to left
+        for (var x = ctx.canvas.width-1; x >= 0 ; x -= 10)
+        {
+            if (imageData.data[(y * ctx.canvas.width + x) * 4] == 180)
+            {
+                results.push({ x: x, y: y });
+                break;
+            }
+        }
+    }
+    results = results.filter(function (item)
+    {
+        return item.x > 200 && item.y > 200 && item.x < 2800 && item.y < 2800;
+    });
+    return results;
 }
 
 function Init()
 {
     ctx = document.getElementById("map").getContext("2d");
-    MakeChamber(500,500);
-    /*for(var i=0;i < 20;i++)
+    Generate();
+}
+
+function Generate()
+{
+    // clear the canvas
+    ctx.fillStyle = "rgba(0,0,0)";
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    document.getElementById("calculating").style.display = "block";
+    setTimeout(function ()
     {
-        Math.ceil(Math.random() * usablePerimeters.length-1);
-        MakeChamber(250+Math.round(Math.random()*100)*10,250+Math.round(Math.random()*100)*10);
-    }*/
+        MakeChamber(1500, 1500);
+        for (var i = 0; i < 80; i++)
+        {
+            var edges = FindEdgePoints();
+            var p = Math.ceil(Math.random() * edges.length - 1);
+            MakeChamber(edges[p].x, edges[p].y);
+        }
+        document.getElementById("calculating").style.display = "none";
+    }, 10);
 }
 // On document ready 
 document.addEventListener("DOMContentLoaded", Init);
